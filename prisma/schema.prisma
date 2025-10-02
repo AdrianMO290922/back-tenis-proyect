@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model categorias {
+  idcategoria Int         @id @default(autoincrement())
+  nombre      String      @unique @db.VarChar(45)
+  created_at  DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime?   @default(now()) @db.Timestamptz(6)
+  productos   productos[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model cliente {
+  idcliente        Int        @id @default(autoincrement())
+  nombres          String     @db.VarChar(45)
+  apellido_p       String     @db.VarChar(45)
+  apellido_m       String?    @db.VarChar(45)
+  telefono         String?    @db.VarChar(15)
+  email            String?    @unique @db.VarChar(100)
+  fecha_nacimiento DateTime?  @db.Date
+  password         String     @db.VarChar(255)
+  iddomicilio      Int?
+  activo           Boolean?   @default(true)
+  created_at       DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?  @default(now()) @db.Timestamptz(6)
+  domicilio        domicilio? @relation(fields: [iddomicilio], references: [iddomicilio])
+  ventas           ventas[]
+
+  @@index([activo], map: "idx_cliente_activo")
+  @@index([email], map: "idx_cliente_email")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model detalleventa {
+  iddetalleventa Int        @id @default(autoincrement())
+  idventa        Int
+  idinventario   Int
+  cantidad       Int
+  total          Decimal    @db.Decimal(10, 2)
+  created_at     DateTime?  @default(now()) @db.Timestamptz(6)
+  inventario     inventario @relation(fields: [idinventario], references: [idinventario])
+  ventas         ventas     @relation(fields: [idventa], references: [idventa], onDelete: Cascade)
+
+  @@unique([idventa, idinventario])
+  @@index([idinventario], map: "idx_detalle_inventario")
+  @@index([idventa], map: "idx_detalle_venta")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model domicilio {
+  iddomicilio Int       @id @default(autoincrement())
+  calle       String    @db.VarChar(45)
+  colonia     String    @db.VarChar(45)
+  numero      String    @db.VarChar(45)
+  cp          String    @db.VarChar(10)
+  ciudad      String    @db.VarChar(45)
+  estado      String    @db.VarChar(45)
+  referencia  String?   @db.VarChar(45)
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+  cliente     cliente[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model empleados {
+  idempleados Int               @id @default(autoincrement())
+  nombre      String            @db.VarChar(45)
+  apellido_p  String            @db.VarChar(45)
+  apellido_m  String?           @db.VarChar(45)
+  telefono    String?           @db.VarChar(15)
+  rol         rol_empleado_enum @default(Employee)
+  activo      Boolean?          @default(true)
+  created_at  DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime?         @default(now()) @db.Timestamptz(6)
+  ventas      ventas[]
+
+  @@index([activo], map: "idx_empleados_activo")
+  @@index([rol], map: "idx_empleados_rol")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model inventario {
+  idinventario Int            @id @default(autoincrement())
+  idproducto   Int
+  talla        String         @db.VarChar(10)
+  cantidad     Int            @default(0)
+  precioventa  Decimal        @db.Decimal(10, 2)
+  preciocompra Decimal        @db.Decimal(10, 2)
+  created_at   DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime?      @default(now()) @db.Timestamptz(6)
+  detalleventa detalleventa[]
+  productos    productos      @relation(fields: [idproducto], references: [idproducto], onDelete: Cascade)
+
+  @@unique([idproducto, talla])
+  @@index([cantidad], map: "idx_inventario_cantidad")
+  @@index([idproducto], map: "idx_inventario_producto")
+  @@index([idproducto, talla], map: "idx_inventario_producto_talla")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model marcas {
+  idmarca    Int         @id @default(autoincrement())
+  nombre     String      @unique @db.VarChar(45)
+  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?   @default(now()) @db.Timestamptz(6)
+  productos  productos[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model productos {
+  idproducto  Int          @id @default(autoincrement())
+  nombre      String       @db.VarChar(45)
+  color       String?      @db.VarChar(45)
+  idcategoria Int
+  idmarca     Int
+  activo      Boolean?     @default(true)
+  created_at  DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime?    @default(now()) @db.Timestamptz(6)
+  inventario  inventario[]
+  categorias  categorias   @relation(fields: [idcategoria], references: [idcategoria])
+  marcas      marcas       @relation(fields: [idmarca], references: [idmarca])
+
+  @@unique([nombre, color, idcategoria, idmarca])
+  @@index([activo], map: "idx_productos_activo")
+  @@index([idcategoria], map: "idx_productos_categoria")
+  @@index([idcategoria, idmarca], map: "idx_productos_categoria_marca")
+  @@index([idmarca], map: "idx_productos_marca")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ventas {
+  idventa      Int             @id @default(autoincrement())
+  fechatime    DateTime?       @default(now()) @db.Timestamptz(6)
+  tipoventa    tipo_venta_enum @default(Presencial)
+  tipopago     tipo_pago_enum
+  idcliente    Int?
+  idempleado   Int
+  subtotal     Decimal         @default(0) @db.Decimal(10, 2)
+  descuento    Decimal         @default(0) @db.Decimal(10, 2)
+  total        Decimal         @db.Decimal(10, 2)
+  created_at   DateTime?       @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime?       @default(now()) @db.Timestamptz(6)
+  detalleventa detalleventa[]
+  cliente      cliente?        @relation(fields: [idcliente], references: [idcliente])
+  empleados    empleados       @relation(fields: [idempleado], references: [idempleados])
+
+  @@index([idcliente], map: "idx_ventas_cliente")
+  @@index([idempleado], map: "idx_ventas_empleado")
+  @@index([fechatime], map: "idx_ventas_fecha")
+  @@index([fechatime, tipoventa], map: "idx_ventas_fecha_tipo")
+  @@index([tipoventa], map: "idx_ventas_tipo")
+}
+
+enum rol_empleado_enum {
+  Admin
+  Employee
+}
+
+enum tipo_pago_enum {
+  Efectivo
+  Tarjeta
+  Transferencia
+}
+
+enum tipo_venta_enum {
+  Presencial
+  Online
+}
