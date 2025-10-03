@@ -18,7 +18,7 @@ export class ClientesController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: number) {
         return this.clienteService.findOne(id);
     }
 /*
@@ -28,7 +28,7 @@ export class ClientesController {
     }
 */
     @Delete(':id')
-    async delete(@Param('id') id: string) {
+    async delete(@Param('id') id: number) {
         return this.clienteService.delete(id);
     }
 }

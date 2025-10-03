@@ -14,7 +14,7 @@ export class ClientesService {
     return this.prisma.clientes.findMany();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     return this.prisma.clientes.findUnique({ where: { id } });
   }
 
@@ -22,7 +22,7 @@ export class ClientesService {
   //   return this.prisma.clientes.update({ where: { id }, data });
   // }
 
-  async delete(id: string) {
-    return this.prisma.clientes.delete({ where: { id } });
+  async delete(id: number) {
+    return "";
   }
 }
