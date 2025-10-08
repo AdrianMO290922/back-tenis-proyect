@@ -18,8 +18,7 @@ export class CreateEmpleadoDto {
     apellido_m: string;
     @IsString()
     @IsNotEmpty()
-    @MaxLength(10)
-    @IsNumber()
+    @MaxLength(15)
     telefono: string;
     @IsString()
     @IsNotEmpty()

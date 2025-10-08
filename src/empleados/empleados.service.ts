@@ -20,10 +20,10 @@ export class EmpleadosService {
   }
 
   update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
-    return {where:{id}, data:{...updateEmpleadoDto}};
+    return this.prisma.empleados.update({where:{id}, data:{...updateEmpleadoDto}});
   }
 
   remove(id: number) {
-    return {where:{id}};
+    return this.prisma.empleados.delete({where:{id}});
   }
 }
