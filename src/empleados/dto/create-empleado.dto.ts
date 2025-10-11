@@ -14,12 +14,10 @@ export class CreateEmpleadoDto {
     @IsNotEmpty()
     apellido_p: string;
     @IsString()
-    @IsNotEmpty()
-    apellido_m: string;
+    apellido_m?: string;
     @IsString()
-    @IsNotEmpty()
     @MaxLength(15)
-    telefono: string;
+    telefono?: string;
     @IsString()
     @IsNotEmpty()
     @IsEnum(Rol, {message:'El rol debe ser Admin o Employee'})

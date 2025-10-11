@@ -8,22 +8,22 @@ export class DomiciliosService {
   constructor( private prisma: PrismaService){}
 
   create(createDomicilioDto: CreateDomicilioDto) {
-    return 'This action adds a new domicilio';
+    return this.prisma.domicilios.create({data:{...createDomicilioDto}});
   }
 
   findAll() {
-return "blabla";
+    return this.prisma.domicilios.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} domicilio`;
+    return this.prisma.domicilios.findUnique({where: {id}});
   }
 
   update(id: number, updateDomicilioDto: UpdateDomicilioDto) {
-    return `This action updates a #${id} domicilio`;
+    return this.prisma.domicilios.update({where:{id},data:{...updateDomicilioDto}});
   }
 
   remove(id: number) {
-    return `This action removes a #${id} domicilio`;
+    return this.prisma.domicilios.delete({where:{id}});
   }
 }
