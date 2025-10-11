@@ -1,8 +1,8 @@
 export class Inventario {
     id: number;
-    idproducto: number;
+    producto_id: number;
     talla: string;
     cantidad: number;
-    precioVenta: number;
-    precioCompra: number
+    precio_venta: number;
+    precio_compra: number
 }

@@ -2,32 +2,33 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('productos')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
     @Post()
-    create(@Body() createProductoDto: CreateProductoDto) {
+    async create(@Body() createProductoDto: CreateProductoDto) {
         return this.productoService.create(createProductoDto);
     }
 
     @Get()
-    findAll() {
+    async findAll() {
         return this.productoService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: number) {
         return this.productoService.findOne(+id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
+    async update(@Param('id') id: number, @Body() updateProductoDto: UpdateProductoDto) {
         return this.productoService.update(+id, updateProductoDto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    async remove(@Param('id') id: number) {
         return this.productoService.remove(+id);
     }
 }

@@ -2,32 +2,33 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { InventarioService } from './inventario.service';
 import { CreateInventarioDto } from './dto/create-inventario.dto';
 import { UpdateInventarioDto } from './dto/update-inventario.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('inventario')
 export class InventarioController {
   constructor(private readonly inventarioService: InventarioService) {}
     @Post()
-    create(@Body() createInventarioDto: CreateInventarioDto) {
+    async create(@Body() createInventarioDto: CreateInventarioDto) {
         return this.inventarioService.create(createInventarioDto);
     }
 
     @Get()
-    findAll() {
+    async findAll() {
         return this.inventarioService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: number) {
         return this.inventarioService.findOne(+id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateInventarioDto: UpdateInventarioDto) {
+    async update(@Param('id') id: number, @Body() updateInventarioDto: UpdateInventarioDto) {
         return this.inventarioService.update(+id, updateInventarioDto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    async remove(@Param('id') id: number) {
         return this.inventarioService.remove(+id);
     }
 }

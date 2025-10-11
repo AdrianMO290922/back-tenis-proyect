@@ -1,15 +1,19 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreateProductoDto {
     @IsString()
+    @IsNotEmpty()
     nombre: string;
 
     @IsString()
+    @IsNotEmpty()
     color: string;
 
     @IsNumber()
-    idCategoria: number;
+    @IsNotEmpty()
+    categoria_id: number;
 
     @IsNumber()
-    idMarca: number;
+    @IsNotEmpty()
+    marca_id: number;
 }
