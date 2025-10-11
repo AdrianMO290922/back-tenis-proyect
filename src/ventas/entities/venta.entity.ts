@@ -1,10 +1,10 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, tipo_pago_enum, tipo_venta_enum } from '@prisma/client';
 
 export class Venta implements Prisma.ventasGetPayload<{}> {
   id: number;
   fecha: Date;
-  tipo_venta: string;
-  tipo_pago: string;
+  tipo_venta: tipo_venta_enum;   
+  tipo_pago: tipo_pago_enum;     
   cliente_id: number | null;
   empleado_id: number;
   subtotal: Prisma.Decimal;

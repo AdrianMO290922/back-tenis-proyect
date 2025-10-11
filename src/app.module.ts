@@ -9,6 +9,10 @@ import { DomiciliosModule } from './domicilios/domicilios.module';
 import { ProductoModule } from './productos/producto.module';
 import { VentasModule } from './ventas/ventas.module';
 import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
+import { CategoriasModule } from './categorias/categorias.module';
+import { MarcasModule } from './marcas/marcas.module';
+
+
 
 @Module({
   imports: [
@@ -19,7 +23,9 @@ import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
     ProductoModule,
     InventarioModule,
     VentasModule,
-    DetalleVentasModule
+    DetalleVentasModule,
+    CategoriasModule,
+    MarcasModule,
   ],
   controllers: [],
   providers: [],

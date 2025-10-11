@@ -2,33 +2,34 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MarcasService } from './marcas.service';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('marcas')
 export class MarcasController {
   constructor(private readonly marcasService: MarcasService) {}
 
   @Post()
-  create(@Body() createMarcaDto: CreateMarcaDto) {
+  async create(@Body() createMarcaDto: CreateMarcaDto) {
     return this.marcasService.create(createMarcaDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.marcasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return this.marcasService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMarcaDto: UpdateMarcaDto) {
+  async update(@Param('id') id: number, @Body() updateMarcaDto: UpdateMarcaDto) {
     return this.marcasService.update(+id, updateMarcaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     return this.marcasService.remove(+id);
   }
 }
