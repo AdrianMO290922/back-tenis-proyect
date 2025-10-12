@@ -1,17 +1,16 @@
-import { Injectable } from "@nestjs/common";
-import { CreateMarcaDto } from "./dto/create-marca.dto"; 
-import { UpdateMarcaDto } from "./dto/update-marca.dto";
-import { PrismaService } from "src/prisma/prisma.service"; 
+import { Injectable } from '@nestjs/common';
+import { CreateMarcaDto } from './dto/create-marca.dto';
+import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class MarcasService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateMarcaDto) {
-    const marca = await this.prisma.marcas.create({
-      data: { nombre: dto.nombre },
+  async create(createMarcaDto: CreateMarcaDto) {
+    return await this.prisma.marcas.create({
+      data: createMarcaDto,
     });
-    return marca;
   }
 
   async findAll() {
@@ -22,10 +21,10 @@ export class MarcasService {
     return await this.prisma.marcas.findUnique({ where: { id } });
   }
 
-  async update(id: number, dto: UpdateMarcaDto) {
+  async update(id: number, updateMarcaDto: UpdateMarcaDto) {
     return await this.prisma.marcas.update({
       where: { id },
-      data: { ...dto },
+      data: updateMarcaDto ,
     });
   }
 
