@@ -23,7 +23,7 @@ export class ClientesService {
     }
 
   async findAll() {
-    return this.prisma.clientes.findMany();
+    return await this.prisma.clientes.findMany();
   }
 
   async findOne(id: number) {
@@ -32,10 +32,10 @@ export class ClientesService {
   }
 
  async update(id: number, updateClienteDto: UpdateClienteDto) {
-     return this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
+     return await this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
    }
 
   async delete(id: number) {
-    return this.prisma.clientes.delete({ where: { id } });
+    return await this.prisma.clientes.delete({ where: { id } });
   }
 }

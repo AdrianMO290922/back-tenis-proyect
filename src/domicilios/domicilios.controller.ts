@@ -8,27 +8,27 @@ export class DomiciliosController {
   constructor(private readonly domiciliosService: DomiciliosService) {}
 
   @Post()
-  create(@Body() createDomicilioDto: CreateDomicilioDto) {
-    return this.domiciliosService.create(createDomicilioDto);
+  async create(@Body() createDomicilioDto: CreateDomicilioDto) {
+    return await this.domiciliosService.create(createDomicilioDto);
   }
 
   @Get()
-  findAll() {
-    return this.domiciliosService.findAll();
+  async findAll() {
+    return await this.domiciliosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.domiciliosService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.domiciliosService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDomicilioDto: UpdateDomicilioDto) {
-    return this.domiciliosService.update(+id, updateDomicilioDto);
+  async update(@Param('id') id: string, @Body() updateDomicilioDto: UpdateDomicilioDto) {
+    return await this.domiciliosService.update(+id, updateDomicilioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.domiciliosService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.domiciliosService.remove(+id);
   }
 }

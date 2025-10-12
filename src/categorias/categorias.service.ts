@@ -10,9 +10,7 @@ export class CategoriasService {
     
     async create(createCategoriaDto: CreateCategoriaDto) {
         const createCategoria = await this.prisma.categorias.create({
-            data:{
-                nombre: createCategoriaDto.nombre
-            }
+            data:createCategoriaDto
         });
         return createCategoria;
     }
@@ -26,7 +24,7 @@ export class CategoriasService {
     }
 
     async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-        return this.prisma.categorias.update({where:{id},data:{...updateCategoriaDto}});
+        return this.prisma.categorias.update({where:{id},data:updateCategoriaDto});
     }
 
     async remove(id: number) {
