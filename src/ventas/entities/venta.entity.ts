@@ -1,4 +1,5 @@
-import { Prisma, tipo_pago_enum, tipo_venta_enum } from '@prisma/client';
+import { TipoPagoEnum as tipo_pago_enum } from "../dto/create-venta.dto";
+import { TipoVentaEnum as tipo_venta_enum } from "../dto/create-venta.dto";
 
 export class Venta {
   id: number;
