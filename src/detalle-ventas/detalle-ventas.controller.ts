@@ -8,37 +8,37 @@ export class DetalleVentasController {
   constructor(private readonly detalleVentasService: DetalleVentasService) {}
 
   @Post()
-  create(@Body() createDetalleVentaDto: CreateDetalleVentaDto) {
-    return this.detalleVentasService.create(createDetalleVentaDto);
+  async create(@Body() createDetalleVentaDto: CreateDetalleVentaDto) {
+    return await this.detalleVentasService.create(createDetalleVentaDto);
   }
 
   @Get()
-  findAll() {
-    return this.detalleVentasService.findAll();
+  async findAll() {
+    return await this.detalleVentasService.findAll();
   }
 
   @Get('venta/:ventaId')
-  findByVenta(@Param('ventaId') ventaId: string) {
-    return this.detalleVentasService.findByVenta(+ventaId);
+  async findByVenta(@Param('ventaId') ventaId: string) {
+    return await this.detalleVentasService.findByVenta(+ventaId);
   }
 
   @Get('inventario/:inventarioId')
-  findByInventario(@Param('inventarioId') inventarioId: string) {
-    return this.detalleVentasService.findByInventario(+inventarioId);
+  async findByInventario(@Param('inventarioId') inventarioId: string) {
+    return await this.detalleVentasService.findByInventario(+inventarioId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.detalleVentasService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.detalleVentasService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDetalleVentaDto: UpdateDetalleVentaDto) {
-    return this.detalleVentasService.update(+id, updateDetalleVentaDto);
+  async update(@Param('id') id: string, @Body() updateDetalleVentaDto: UpdateDetalleVentaDto) {
+    return await this.detalleVentasService.update(+id, updateDetalleVentaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.detalleVentasService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.detalleVentasService.remove(+id);
   }
 }

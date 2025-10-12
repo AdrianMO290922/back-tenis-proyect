@@ -7,28 +7,29 @@ import { Prisma } from '@prisma/client';
 @Controller('productos')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
-    @Post()
-    async create(@Body() createProductoDto: CreateProductoDto) {
-        return this.productoService.create(createProductoDto);
-    }
 
-    @Get()
-    async findAll() {
-        return this.productoService.findAll();
-    }
+  @Post()
+  async create(@Body() createProductoDto: CreateProductoDto) {
+    return await this.productoService.create(createProductoDto);
+  }
 
-    @Get(':id')
-    async findOne(@Param('id') id: number) {
-        return this.productoService.findOne(+id);
-    }
+  @Get()
+  async findAll() {
+    return await this.productoService.findAll();
+  }
 
-    @Patch(':id')
-    async update(@Param('id') id: number, @Body() updateProductoDto: UpdateProductoDto) {
-        return this.productoService.update(+id, updateProductoDto);
-    }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.productoService.findOne(+id);
+  }
 
-    @Delete(':id')
-    async remove(@Param('id') id: number) {
-        return this.productoService.remove(+id);
-    }
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
+    return await this.productoService.update(+id, updateProductoDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.productoService.remove(+id);
+  }
 }
