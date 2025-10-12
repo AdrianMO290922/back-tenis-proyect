@@ -5,25 +5,28 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class DomiciliosService {
-  constructor( private prisma: PrismaService){}
+  constructor(private prisma: PrismaService) {}
 
-  create(createDomicilioDto: CreateDomicilioDto) {
-    return this.prisma.domicilios.create({data:{...createDomicilioDto}});
+  async create(createDomicilioDto: CreateDomicilioDto) {
+    return await this.prisma.domicilios.create({ data: createDomicilioDto });
   }
 
-  findAll() {
-    return this.prisma.domicilios.findMany();
+  async findAll() {
+    return await this.prisma.domicilios.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.domicilios.findUnique({where: {id}});
+  async findOne(id: number) {
+    return await this.prisma.domicilios.findUnique({ where: { id } });
   }
 
-  update(id: number, updateDomicilioDto: UpdateDomicilioDto) {
-    return this.prisma.domicilios.update({where:{id},data:{...updateDomicilioDto}});
+  async update(id: number, updateDomicilioDto: UpdateDomicilioDto) {
+    return await this.prisma.domicilios.update({
+      where: { id },
+      data: updateDomicilioDto,
+    });
   }
 
-  remove(id: number) {
-    return this.prisma.domicilios.delete({where:{id}});
+  async remove(id: number) {
+    return await this.prisma.domicilios.delete({ where: { id } });
   }
 }

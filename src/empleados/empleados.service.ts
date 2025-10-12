@@ -5,25 +5,28 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EmpleadosService {
-    constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
   
-  create(createEmpleadoDto: CreateEmpleadoDto) {
-    return this.prisma.empleados.create({data:{...createEmpleadoDto}});
+  async create(createEmpleadoDto: CreateEmpleadoDto) {
+    return await this.prisma.empleados.create({ data: createEmpleadoDto });
   }
 
-  findAll() {
-    return this.prisma.empleados.findMany();
+  async findAll() {
+    return await this.prisma.empleados.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.empleados.findUnique({where :{id}});
+  async findOne(id: number) {
+    return await this.prisma.empleados.findUnique({ where: { id } });
   }
 
-  update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
-    return this.prisma.empleados.update({where:{id}, data:{...updateEmpleadoDto}});
+  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
+    return await this.prisma.empleados.update({
+      where: { id },
+      data: updateEmpleadoDto,
+    });
   }
 
-  remove(id: number) {
-    return this.prisma.empleados.delete({where:{id}});
+  async remove(id: number) {
+    return await this.prisma.empleados.delete({ where: { id } });
   }
 }
