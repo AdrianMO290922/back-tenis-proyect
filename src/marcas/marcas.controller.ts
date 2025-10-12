@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MarcasService } from './marcas.service';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma } from'@prisma/client'; 
 
 @Controller('marcas')
 export class MarcasController {
