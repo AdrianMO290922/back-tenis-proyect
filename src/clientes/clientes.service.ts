@@ -9,7 +9,6 @@ import { ErrorManager } from 'src/utils/error.manager';
 @Injectable()
 export class ClientesService {
   constructor(private prisma: PrismaService) {}
-
    async create(crearteClienteDto: CrearteClienteDto) {
         const createCliente = await this.prisma.clientes.create({ data: {...crearteClienteDto} });
         return createCliente;
@@ -36,10 +35,32 @@ export class ClientesService {
   }
 
  async update(id: number, updateClienteDto: UpdateClienteDto) {
-     return await this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
-   }
+  try{
+    const updatedCliente = await this.prisma.clientes.findUnique({ where: { id } });
+    if (!updatedCliente) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El cliente con id ${id} no existe`,
+      })
+    }
+    return updatedCliente;
+    }catch(error){
+      throw ErrorManager.createSignatureError(error.message);
+    }
+}
 
   async delete(id: number) {
-    return await this.prisma.clientes.delete({ where: { id } });
+   try{
+     const deletedCliente = await this.prisma.clientes.findUnique({ where: { id } });
+    if (!deletedCliente) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El cliente con id ${id} no existe`,
+      })
+    }
+    return deletedCliente;
+  }catch(error){
+    throw ErrorManager.createSignatureError(error.message);
   }
+}
 }
