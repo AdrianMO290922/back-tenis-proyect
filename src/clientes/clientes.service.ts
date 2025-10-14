@@ -36,7 +36,7 @@ export class ClientesService {
 
  async update(id: number, updateClienteDto: UpdateClienteDto) {
   try{
-    const updatedCliente = await this.prisma.clientes.findUnique({ where: { id } });
+    const updatedCliente = await this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
     if (!updatedCliente) {
       throw new ErrorManager({
         type: 'NOT_FOUND',
@@ -51,7 +51,7 @@ export class ClientesService {
 
   async delete(id: number) {
    try{
-     const deletedCliente = await this.prisma.clientes.findUnique({ where: { id } });
+     const deletedCliente = await this.prisma.clientes.delete({ where: { id } });
     if (!deletedCliente) {
       throw new ErrorManager({
         type: 'NOT_FOUND',
