@@ -1,26 +1,36 @@
-import { Injectable } from "@nestjs/common";
-import { CreateInventarioDto } from "./dto/create-inventario.dto"; 
-import { UpdateInventarioDto } from "./dto/update-inventario.dto";
+import { Injectable } from '@nestjs/common';
+import { CreateInventarioDto } from './dto/create-inventario.dto';
+import { UpdateInventarioDto } from './dto/update-inventario.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class InventarioService {
-    create(createInvetarioDto: CreateInventarioDto) {
-        return "This action adds a new producto";
-    }
+  constructor(private prisma: PrismaService) {}
 
-    findAll() {
-        return `This action returns all productos`;
-    }
+  async create(createInvetarioDto: CreateInventarioDto) {
+    const createInventario = await this.prisma.inventarios.create({
+      data: createInvetarioDto,
+    });
+    return createInventario;
+  }
 
-    findOne(id: number) {
-        return `This action returns a #${id} producto`;
-    }
+  async findAll() {
+    return this.prisma.inventarios.findMany();
+  }
 
-    update(id: number, updateInventarioDto: UpdateInventarioDto) {
-        return `This action updates a #${id} producto`;
-    }
+  async findOne(id: number) {
+    return this.prisma.inventarios.findUnique({ where: { id } });
+  }
 
-    remove(id: number) {
-        return `This action removes a #${id} producto`;
-    }
+  async update(id: number, updateInventarioDto: UpdateInventarioDto) {
+    return this.prisma.inventarios.update({
+      where: { id },
+      data: updateInventarioDto,
+    });
+  }
+
+  async remove(id: number) {
+    return this.prisma.inventarios.delete({ where: { id } });
+  }
 }

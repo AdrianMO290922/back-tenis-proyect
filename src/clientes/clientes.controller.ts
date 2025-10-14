@@ -11,18 +11,18 @@ export class ClientesController {
 
     @Post()
     async create(@Body() crearteClienteDto: CrearteClienteDto) {
-        return this.clienteService.create(crearteClienteDto);
+        return await this.clienteService.create(crearteClienteDto);
     }
 
     @Get()
     async findAll() {
-        return this.clienteService.findAll();
+        return await this.clienteService.findAll();
     }
 
     @Get(':id')
     async findOne(@Param('id') id: number) {
         const clienteId = Number(id);
-        return this.clienteService.findOne(clienteId);
+        return await this.clienteService.findOne(clienteId);
     }
 
     @Patch(':id')
@@ -35,6 +35,6 @@ export class ClientesController {
     @Delete(':id')
     async delete(@Param('id') id: number) {
         const clienteId = Number(id);
-        return this.clienteService.delete(clienteId);
+        return await this.clienteService.delete(clienteId);
     }
 }

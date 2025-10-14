@@ -14,4 +14,6 @@ export class CrearteClienteDto{
     email:string;
     @IsOptional()
     fecha_nacimiento?:Date;
+    @IsString()
+    password:string;
 }

@@ -2,32 +2,34 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('productos')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
-    @Post()
-    create(@Body() createProductoDto: CreateProductoDto) {
-        return this.productoService.create(createProductoDto);
-    }
 
-    @Get()
-    findAll() {
-        return this.productoService.findAll();
-    }
+  @Post()
+  async create(@Body() createProductoDto: CreateProductoDto) {
+    return await this.productoService.create(createProductoDto);
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.productoService.findOne(+id);
-    }
+  @Get()
+  async findAll() {
+    return await this.productoService.findAll();
+  }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-        return this.productoService.update(+id, updateProductoDto);
-    }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.productoService.findOne(+id);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.productoService.remove(+id);
-    }
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
+    return await this.productoService.update(+id, updateProductoDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.productoService.remove(+id);
+  }
 }

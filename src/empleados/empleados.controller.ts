@@ -8,27 +8,27 @@ export class EmpleadosController {
   constructor(private readonly empleadosService: EmpleadosService) {}
 
   @Post()
-  create(@Body() createEmpleadoDto: CreateEmpleadoDto) {
-    return this.empleadosService.create(createEmpleadoDto);
+  async create(@Body() createEmpleadoDto: CreateEmpleadoDto) {
+    return await this.empleadosService.create(createEmpleadoDto);
   }
 
   @Get()
-  findAll() {
-    return this.empleadosService.findAll();
+  async findAll() {
+    return await this.empleadosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.empleadosService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.empleadosService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto) {
-    return this.empleadosService.update(+id, updateEmpleadoDto);
+  async update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto) {
+    return await this.empleadosService.update(+id, updateEmpleadoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.empleadosService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.empleadosService.remove(+id);
   }
 }

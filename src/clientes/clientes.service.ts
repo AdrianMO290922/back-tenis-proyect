@@ -4,38 +4,63 @@ import { Prisma } from '@prisma/client';
 import { CrearteClienteDto } from './dto/create-cliente.dto';
 import { CreateCategoriaDto } from 'src/categorias/dto/create-categoria.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class ClientesService {
   constructor(private prisma: PrismaService) {}
-
    async create(crearteClienteDto: CrearteClienteDto) {
-        const createCliente = await this.prisma.clientes.create({ data: {
-            nombres: crearteClienteDto.nombres,
-            apellido_p: crearteClienteDto.apellido_p,
-            apellido_m: crearteClienteDto.apellido_m,
-            telefono: crearteClienteDto.telefono,
-            email: crearteClienteDto.email,
-            fecha_nacimiento: crearteClienteDto.fecha_nacimiento,
-            password: 'Sin password' // Set a default or hashed password here
-         } });
+        const createCliente = await this.prisma.clientes.create({ data: {...crearteClienteDto} });
         return createCliente;
     }
 
   async findAll() {
-    return this.prisma.clientes.findMany();
+    return await this.prisma.clientes.findMany();
   }
 
   async findOne(id: number) {
-    const cliente = await this.prisma.clientes.findUnique({ where: { id } });
+   try{
+     const cliente = await this.prisma.clientes.findUnique({ where: { id } });
+    if (!cliente) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El cliente con id ${id} no existe`,
+      })
+    }
     return cliente;
+
+   }catch(error){
+    throw ErrorManager.createSignatureError(error.message);
+   }
   }
 
  async update(id: number, updateClienteDto: UpdateClienteDto) {
-     return this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
-   }
+  try{
+    const updatedCliente = await this.prisma.clientes.update({ where: { id }, data: updateClienteDto });
+    if (!updatedCliente) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El cliente con id ${id} no existe`,
+      })
+    }
+    return updatedCliente;
+    }catch(error){
+      throw ErrorManager.createSignatureError(error.message);
+    }
+}
 
   async delete(id: number) {
-    return this.prisma.clientes.delete({ where: { id } });
+   try{
+     const deletedCliente = await this.prisma.clientes.delete({ where: { id } });
+    if (!deletedCliente) {
+      throw new ErrorManager({
+        type: 'NOT_FOUND',
+        message: `El cliente con id ${id} no existe`,
+      })
+    }
+    return deletedCliente;
+  }catch(error){
+    throw ErrorManager.createSignatureError(error.message);
   }
+}
 }

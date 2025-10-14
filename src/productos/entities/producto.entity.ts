@@ -2,6 +2,6 @@ export class Producto {
     id: number;
     nombre: string;
     color: string;
-    idCategoria: number;
-    idMarca: number;
+    categoria_id: number;
+    marca_id: number;
 }
