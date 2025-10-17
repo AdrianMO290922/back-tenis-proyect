@@ -11,6 +11,7 @@ import { VentasModule } from './ventas/ventas.module';
 import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
 import { CategoriasModule } from './categorias/categorias.module';
 import { MarcasModule } from './marcas/marcas.module';
+import { AuthModule } from './Auth/auth.module';
 
 
 
@@ -26,6 +27,7 @@ import { MarcasModule } from './marcas/marcas.module';
     DetalleVentasModule,
     CategoriasModule,
     MarcasModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],

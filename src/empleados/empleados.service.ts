@@ -15,6 +15,23 @@ export class EmpleadosService {
   async findAll() {
     return await this.prisma.empleados.findMany();
   }
+  async findByEmail(email: string) {
+    try{
+      const empleado = await this.prisma.empleados.findUnique({where: {email}});
+      if(!empleado){
+         throw new ErrorManager({
+                type: 'NOT_FOUND',
+                message: `El empleado con email ${email} no existe`,
+              })
+      }
+      return empleado;
+
+    }catch(error){
+      throw ErrorManager.createSignatureError(error.message);
+
+    }
+    
+  }
 
   async findOne(id: number) {
     try{

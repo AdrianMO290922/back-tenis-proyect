@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateInventarioDto } from './dto/create-inventario.dto';
 import { UpdateInventarioDto } from './dto/update-inventario.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class InventarioService {
   constructor(private prisma: PrismaService) {}
 
   async create(createInvetarioDto: CreateInventarioDto) {
-    const createInventario = await this.prisma.inventarios.create({
-      data: createInvetarioDto,
-    });
-    return createInventario;
+    return await this.prisma.inventarios.create({data: createInvetarioDto,});
   }
 
   async findAll() {
@@ -20,17 +17,49 @@ export class InventarioService {
   }
 
   async findOne(id: number) {
-    return this.prisma.inventarios.findUnique({ where: { id } });
+    try {
+      const inventario = await this.prisma.inventarios.findUnique({ where: { id } });
+      if (!inventario) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El inventario con id ${id} no existe`,
+        });
+      }
+      return inventario;
+
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+
+    }
   }
 
   async update(id: number, updateInventarioDto: UpdateInventarioDto) {
-    return this.prisma.inventarios.update({
-      where: { id },
-      data: updateInventarioDto,
-    });
+    try {
+      const updatedInventario = await this.prisma.inventarios.update({ where: { id }, data: updateInventarioDto });
+      if (!updatedInventario) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El inventario con id ${id} no existe`,
+        });
+      }
+      return updatedInventario;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
   }
 
   async remove(id: number) {
-    return this.prisma.inventarios.delete({ where: { id } });
+    try {
+      const deletedInventario = await this.prisma.inventarios.delete({ where: { id } });
+      if (!deletedInventario) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El inventario con id ${id} no existe`,
+        });
+      }
+      return deletedInventario;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
   }
 }

@@ -20,6 +20,12 @@ export class CreateEmpleadoDto {
     telefono?: string;
     @IsString()
     @IsNotEmpty()
+    email: string;
+    @IsString()
+    @IsNotEmpty()
+    password: string;
+    @IsString()
+    @IsNotEmpty()
     @IsEnum(Rol, {message:'El rol debe ser Admin o Employee'})
     rol: Rol;
     
