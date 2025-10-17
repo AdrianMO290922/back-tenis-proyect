@@ -2,10 +2,13 @@ import { Body, Controller, Post, UnauthorizedException } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { EmpleadosService } from "src/empleados/empleados.service";
+import type { JwtPayload } from "./types/jwt.payload.type";
+import { JwtService } from "@nestjs/jwt";
 
 @Controller('auth')
 export class AuthController {
-constructor(private readonly empleadoService: EmpleadosService){}
+constructor(private readonly empleadoService: EmpleadosService,
+            private readonly jwtService: JwtService){}
 
 @Post('register')
     async register(@Body() { email, password, nombre, apellido_p, apellido_m, rol }: RegisterDto){
@@ -21,7 +24,9 @@ constructor(private readonly empleadoService: EmpleadosService){}
         if(empleado.password !== password){
             throw new UnauthorizedException('Credenciales invalidas');
         }
-        return {message: 'Login exitoso'}
+        const payload: JwtPayload = {empleadoId: empleado.id, email: empleado.email || '', rol: empleado.rol};
+        const access_token = await this.jwtService.signAsync(payload);
+        return {message: 'Login exitoso', access_token}
 
     } 
 }
