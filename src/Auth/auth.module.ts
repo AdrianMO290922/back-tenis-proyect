@@ -9,8 +9,7 @@ import { JwtModule } from "@nestjs/jwt";
     imports: [PrismaModule,
         JwtModule.register({
             global: true,
-            //secret: process.env.JWT_SECRET || 'Secret',
-            secret:'SECRET',
+            secret: process.env.JWT_SECRET,
             signOptions: { expiresIn: '1h' }
         })
     ],

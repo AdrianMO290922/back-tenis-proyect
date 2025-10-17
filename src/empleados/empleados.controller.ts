@@ -15,6 +15,7 @@ export class EmpleadosController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAll() {
     return await this.empleadosService.findAll();
   }
