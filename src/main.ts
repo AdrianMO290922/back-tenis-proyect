@@ -10,6 +10,7 @@ async function bootstrap() {
     whitelist:true,
     forbidNonWhitelisted: true
   }));
+  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('Tennis API')
     .setDescription('API para la gestion de una tienda de tenis')
@@ -19,6 +20,6 @@ async function bootstrap() {
 const document = SwaggerModule.createDocument(app, config);
 app.use('/docs', apiReference({content:document}))
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 4321);
 }
 bootstrap();

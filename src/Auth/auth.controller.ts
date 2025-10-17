@@ -1,9 +1,10 @@
-import { Body, Controller, Post, UnauthorizedException } from "@nestjs/common";
+import { Body, Controller, Post, Request, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { EmpleadosService } from "src/empleados/empleados.service";
 import type { JwtPayload } from "./types/jwt.payload.type";
 import { JwtService } from "@nestjs/jwt";
+import { AuthGuard } from "./guard/auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -29,4 +30,9 @@ constructor(private readonly empleadoService: EmpleadosService,
         return {message: 'Login exitoso', access_token}
 
     } 
+    @Post('profile')
+    @UseGuards(AuthGuard)
+    Profile(@Request() {jwt}:{jwt:JwtPayload}) {
+        return jwt;
+    }
 }
