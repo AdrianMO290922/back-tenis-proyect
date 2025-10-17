@@ -1,4 +1,5 @@
-import { IsEmail, IsString } from "class-validator"
+import { IsEmail, IsString, IsEnum } from "class-validator"
+import { Rol } from "src/empleados/dto/create-empleado.dto";
 
 export class RegisterDto {
     @IsEmail()
@@ -11,6 +12,6 @@ export class RegisterDto {
     apellido_p:string;
     @IsString()
     apellido_m:string;
-    @IsString()
-    rol:string;
+    @IsEnum(Rol, {message:'El rol debe ser Admin o Employee'})
+    rol:Rol;
 }
