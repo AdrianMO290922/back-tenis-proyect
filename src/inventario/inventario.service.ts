@@ -9,16 +9,30 @@ export class InventarioService {
   constructor(private prisma: PrismaService) {}
 
   async create(createInvetarioDto: CreateInventarioDto) {
-    return await this.prisma.inventarios.create({data: createInvetarioDto,});
+    return await this.prisma.inventarios.create({
+      data: createInvetarioDto,
+      include: {
+        productos: true,
+      },
+    });
   }
 
   async findAll() {
-    return this.prisma.inventarios.findMany();
+    return this.prisma.inventarios.findMany(
+      {
+        include: {
+          productos: true,
+        },
+      }
+    );
   }
 
   async findOne(id: number) {
     try {
-      const inventario = await this.prisma.inventarios.findUnique({ where: { id } });
+      const inventario = await this.prisma.inventarios.findUnique({ 
+        where: { id }, 
+        include: { productos: true } 
+      });
       if (!inventario) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
@@ -26,16 +40,18 @@ export class InventarioService {
         });
       }
       return inventario;
-
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
-
     }
   }
 
   async update(id: number, updateInventarioDto: UpdateInventarioDto) {
     try {
-      const updatedInventario = await this.prisma.inventarios.update({ where: { id }, data: updateInventarioDto });
+      const updatedInventario = await this.prisma.inventarios.update({ 
+        where: { id }, 
+        data: updateInventarioDto,
+        include: { productos: true }
+      });
       if (!updatedInventario) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
@@ -61,5 +77,12 @@ export class InventarioService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async findByProducto(productoId: number) {
+    return this.prisma.inventarios.findMany({
+      where: { producto_id: productoId },
+      include: { productos: true },
+    });
   }
 }

@@ -23,6 +23,16 @@ export class ProductoController {
     return await this.productoService.findOne(+id);
   }
 
+  @Get('categoria/:categoriaId')
+  findByCliente(@Param('categoriaId') categoriaId: string) {
+    return this.productoService.findByCategoria(+categoriaId);
+  }
+
+  @Get('marca/:marcaId')
+  findByEmpleado(@Param('marcaId') marcaId: string) {
+    return this.productoService.findByMarca(+marcaId);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
     return await this.productoService.update(+id, updateProductoDto);

@@ -10,16 +10,46 @@ export class ProductoService {
   constructor(private prisma: PrismaService) {}
   
   async create(createProductoDto: CreateProductoDto) {
-    return await this.prisma.productos.create({data: createProductoDto});
+    return await this.prisma.productos.create({
+      data: {
+        nombre: createProductoDto.nombre,
+        color: createProductoDto.color,
+        categoria_id: createProductoDto.categoria_id,
+        marca_id: createProductoDto.marca_id,
+      },
+      include:{
+        categorias: true,
+        marcas: true,
+        inventarios: true,
+      },
+    });
   }
 
   async findAll() {
-    return await this.prisma.productos.findMany();
+    const productos = await this.prisma.productos.findMany({
+      include:{
+        categorias: true,
+        marcas: true,
+        inventarios: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    return productos;
   }
 
   async findOne(id: number) {
     try {
-      const producto = await this.prisma.productos.findUnique({ where: { id } });
+      const producto = await this.prisma.productos.findUnique({ 
+        where: { id },
+        include:{
+          categorias: true,
+          marcas: true,
+          inventarios: true,
+        },
+        
+      });
       if (!producto) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
@@ -34,7 +64,15 @@ export class ProductoService {
 
   async update(id: number, updateProductoDto: UpdateProductoDto) {
     try {
-      const updatedProducto = await this.prisma.productos.update({ where: { id }, data: updateProductoDto });
+      const updatedProducto = await this.prisma.productos.update({ 
+        where: { id }, 
+        data: updateProductoDto,
+        include:{
+          categorias: true,
+          marcas: true,
+          inventarios: true,
+        },
+      });
       if (!updatedProducto) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
@@ -60,5 +98,33 @@ export class ProductoService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+
+  async findByCategoria(categoria_id: number) {
+    return this.prisma.productos.findMany({
+      where: { categoria_id },
+      include:{
+        categorias: true,
+        marcas: true,
+        inventarios: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+  }
+
+  async findByMarca(marca_id: number) {
+    return this.prisma.productos.findMany({
+      where: { marca_id },
+      include:{
+        categorias: true,
+        marcas: true,
+        inventarios: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
   }
 }
