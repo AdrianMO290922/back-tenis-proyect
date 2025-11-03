@@ -58,6 +58,7 @@ model productos {
   inventarios  inventarios[]
   categorias   categorias    @relation(fields: [categoria_id], references: [id])
   marcas       marcas        @relation(fields: [marca_id], references: [id])
+  imagenes_productos     imagenes_productos[]
 
   @@unique([nombre, color, categoria_id, marca_id])
   @@index([activo], map: "idx_productos_activo")
@@ -144,6 +145,19 @@ model domicilios {
   created_at DateTime?  @default(now()) @db.Timestamptz(6)
   updated_at DateTime?  @default(now()) @db.Timestamptz(6)
   clientes   clientes[]
+}
+
+model imagenes_productos {
+  id           Int        @id @default(autoincrement())
+  producto_id  Int
+  url          String     @db.VarChar(500)
+  es_principal Boolean?   @default(false)
+  created_at   DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime?  @default(now()) @db.Timestamptz(6)
+
+  productos     productos       @relation(fields: [producto_id], references: [id], onDelete: Cascade)
+
+  @@index([producto_id], map: "idx_imagenes_productos_producto")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.

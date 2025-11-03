@@ -21,6 +21,7 @@ export class ProductoService {
         categorias: true,
         marcas: true,
         inventarios: true,
+        imagenes_productos: true,
       },
     });
   }

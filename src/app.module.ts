@@ -12,6 +12,7 @@ import { DetalleVentasModule } from './detalle-ventas/detalle-ventas.module';
 import { CategoriasModule } from './categorias/categorias.module';
 import { MarcasModule } from './marcas/marcas.module';
 import { AuthModule } from './Auth/auth.module';
+import { ImagenesProductosModule } from './imagenes-productos/imagenes-productos.module';
 
 
 
@@ -27,7 +28,8 @@ import { AuthModule } from './Auth/auth.module';
     DetalleVentasModule,
     CategoriasModule,
     MarcasModule,
-    AuthModule
+    AuthModule,
+    ImagenesProductosModule
   ],
   controllers: [],
   providers: [],
