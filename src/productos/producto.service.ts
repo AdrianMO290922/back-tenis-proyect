@@ -21,7 +21,7 @@ export class ProductoService {
         categorias: true,
         marcas: true,
         inventarios: true,
-        imagenes_productos: true,
+        
       },
     });
   }
@@ -32,6 +32,7 @@ export class ProductoService {
         categorias: true,
         marcas: true,
         inventarios: true,
+        imagenes_productos: true,
       },
       orderBy: {
         id: 'asc',
@@ -48,6 +49,7 @@ export class ProductoService {
           categorias: true,
           marcas: true,
           inventarios: true,
+          imagenes_productos: true,
         },
         
       });
@@ -108,6 +110,7 @@ export class ProductoService {
         categorias: true,
         marcas: true,
         inventarios: true,
+        imagenes_productos: true,
       },
       orderBy: {
         id: 'asc',
@@ -122,6 +125,7 @@ export class ProductoService {
         categorias: true,
         marcas: true,
         inventarios: true,
+        imagenes_productos: true,
       },
       orderBy: {
         id: 'asc',
