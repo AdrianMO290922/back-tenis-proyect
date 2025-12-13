@@ -1,20 +1,34 @@
-import * as PdfPrinter from "pdfmake"
+import PdfPrinter from "pdfmake"
+import path from "path"
 //import type { TDocumentDefinitions } from "pdfmake/interfaces"
+import * as fs from "fs"
 
 export class VentasReportService {
 
     async generarReporteVentas(ventas: any[], fechaInicio: string, fechaFin: string): Promise<Buffer> {
 
-        // 1️⃣ Definimos las fuentes (OBLIGATORIO)
+        // 1️⃣ Definir las rutas de las fuentes
+        // Se usa Helvetica como fallback si las fuentes personalizadas no existen
+        const fontsPath = path.join(process.cwd(), "src/common/fonts")
+        
         const fonts = {
             Roboto: {
-                normal: "node_modules/pdfmake/fonts/Roboto-Regular.ttf",
-                bold: "node_modules/pdfmake/fonts/Roboto-Medium.ttf",
-                italics: "node_modules/pdfmake/fonts/Roboto-Italic.ttf",
-                bolditalics: "node_modules/pdfmake/fonts/Roboto-MediumItalic.ttf",
+                normal: fs.existsSync(path.join(fontsPath, "Roboto-Regular.ttf"))
+                    ? path.join(fontsPath, "Roboto-Regular.ttf")
+                    : "Helvetica",
+                bold: fs.existsSync(path.join(fontsPath, "Roboto-Medium.ttf"))
+                    ? path.join(fontsPath, "Roboto-Medium.ttf")
+                    : "Helvetica-Bold",
+                italics: fs.existsSync(path.join(fontsPath, "Roboto-Italic.ttf"))
+                    ? path.join(fontsPath, "Roboto-Italic.ttf")
+                    : "Helvetica-Oblique",
+                bolditalics: fs.existsSync(path.join(fontsPath, "Roboto-MediumItalic.ttf"))
+                    ? path.join(fontsPath, "Roboto-MediumItalic.ttf")
+                    : "Helvetica-BoldOblique",
             },
         }
 
+        // 2️⃣ Crear la instancia de PdfPrinter
         const printer = new PdfPrinter(fonts)
 
         // Calcular totales
@@ -22,7 +36,7 @@ export class VentasReportService {
         const totalSubtotal = ventas.reduce((sum, v) => sum + parseFloat(v.subtotal || 0), 0)
         const totalDescuento = ventas.reduce((sum, v) => sum + parseFloat(v.descuento || 0), 0)
 
-        // 2️⃣ Definimos el contenido del PDF
+        // 3️⃣ Definimos el contenido del PDF
         const docDefinition: any = {
             content: [
                 { text: "Reporte de Ventas", style: "header" },

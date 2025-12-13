@@ -8,8 +8,6 @@ import type { Response as ExpressResponse } from 'express';
 
 @ApiTags('Ventas')
 @Controller('ventas')
-
-@Controller('ventas')
 export class VentasController {
   constructor(
     private readonly ventasService: VentasService,
