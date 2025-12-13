@@ -1,5 +1,5 @@
 import * as PdfPrinter from "pdfmake"
-import type { TDocumentDefinitions } from "pdfmake/interfaces"
+//import type { TDocumentDefinitions } from "pdfmake/interfaces"
 
 export class VentasReportService {
 
@@ -23,7 +23,7 @@ export class VentasReportService {
         const totalDescuento = ventas.reduce((sum, v) => sum + parseFloat(v.descuento || 0), 0)
 
         // 2️⃣ Definimos el contenido del PDF
-        const docDefinition: TDocumentDefinitions = {
+        const docDefinition: any = {
             content: [
                 { text: "Reporte de Ventas", style: "header" },
                 { text: `Período: ${fechaInicio} - ${fechaFin}`, style: "subheader", margin: [0, 0, 0, 15] },
