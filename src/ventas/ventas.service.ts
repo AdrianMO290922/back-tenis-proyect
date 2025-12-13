@@ -5,7 +5,7 @@ import { UpdateVentaDto } from './dto/update-venta.dto';
 
 @Injectable()
 export class VentasService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createVentaDto: CreateVentaDto) {
     return this.prisma.ventas.create({
@@ -171,6 +171,42 @@ export class VentasService {
       },
       orderBy: {
         created_at: 'desc',
+      },
+    });
+  }
+
+  async findByDateRange(fechaInicio: string, fechaFin: string) {
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    fin.setHours(23, 59, 59, 999);
+
+    return this.prisma.ventas.findMany({
+      where: {
+        fecha: {
+          gte: inicio,
+          lte: fin,
+        },
+      },
+      include: {
+        clientes: true,
+        empleados: true,
+        detalleventas: {
+          include: {
+            inventarios: {
+              include: {
+                productos: {
+                  include: {
+                    categorias: true,
+                    marcas: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        fecha: 'asc',
       },
     });
   }
