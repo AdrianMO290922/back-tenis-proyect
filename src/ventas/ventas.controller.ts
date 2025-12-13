@@ -27,19 +27,19 @@ export class VentasController {
   @Get('reporte/pdf')
   @ApiOperation({ 
     summary: 'Generar reporte de ventas en PDF',
-    description: 'Genera un reporte PDF con todas las ventas en un rango de fechas especificado. El reporte incluye detalles de productos, cliente, empleado y totales.'
+    description: 'Genera un reporte PDF profesional con todas las ventas en un rango de fechas especificado. El reporte muestra cada producto vendido con su talla, cantidad, precio unitario y vendedor.'
   })
   @ApiQuery({ 
     name: 'fechaInicio', 
     type: 'string',
     description: 'Fecha de inicio del reporte (formato: YYYY-MM-DD)',
-    example: '2025-01-01'
+    example: '2024-10-01'
   })
   @ApiQuery({ 
     name: 'fechaFin', 
     type: 'string',
     description: 'Fecha de fin del reporte (formato: YYYY-MM-DD)',
-    example: '2025-01-31'
+    example: '2024-10-31'
   })
   @ApiResponse({ 
     status: 200, 
