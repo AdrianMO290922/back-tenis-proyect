@@ -1,16 +1,21 @@
-import { 
-  IsNumber, 
+import {
+  IsNumber,
   IsDecimal,
   IsNotEmpty,
   IsInt,
   IsPositive,
   Min,
   Max,
-  IsOptional
+  IsOptional,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
 export class CreateDetalleVentaDto {
+  @IsNotEmpty({ message: 'El ID de la venta es requerido' })
+  @IsInt({ message: 'El ID de la venta debe ser un número entero' })
+  @IsPositive({ message: 'El ID de la venta debe ser positivo' })
+  @Type(() => Number)
+  venta_id: number;
 
   @IsNotEmpty({ message: 'El ID del inventario es requerido' })
   @IsInt({ message: 'El ID del inventario debe ser un número entero' })
@@ -27,7 +32,10 @@ export class CreateDetalleVentaDto {
   cantidad: number;
 
   @IsNotEmpty({ message: 'El total es requerido' })
-  @IsDecimal({ decimal_digits: '0,2' }, { message: 'El total debe tener máximo 2 decimales' })
+  @IsDecimal(
+    { decimal_digits: '0,2' },
+    { message: 'El total debe tener máximo 2 decimales' },
+  )
   @IsPositive({ message: 'El total debe ser un número positivo' })
   @Min(0.01, { message: 'El total debe ser mayor a 0' })
   @Max(99999999.99, { message: 'El total no puede exceder 99,999,999.99' })
