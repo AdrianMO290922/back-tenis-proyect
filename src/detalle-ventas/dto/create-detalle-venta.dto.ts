@@ -11,11 +11,6 @@ import {
 import { Type, Transform } from 'class-transformer';
 
 export class CreateDetalleVentaDto {
-  @IsNotEmpty({ message: 'El ID de la venta es requerido' })
-  @IsInt({ message: 'El ID de la venta debe ser un número entero' })
-  @IsPositive({ message: 'El ID de la venta debe ser un número positivo' })
-  @Type(() => Number)
-  venta_id: number;
 
   @IsNotEmpty({ message: 'El ID del inventario es requerido' })
   @IsInt({ message: 'El ID del inventario debe ser un número entero' })

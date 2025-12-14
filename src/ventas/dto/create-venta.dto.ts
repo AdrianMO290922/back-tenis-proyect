@@ -17,6 +17,7 @@ import {
   ArrayMaxSize,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+import { CreateDetalleVentaDto } from 'src/detalle-ventas/dto/create-detalle-venta.dto';
 
 export enum TipoVentaEnum {
   Presencial = 'Presencial',
@@ -28,6 +29,31 @@ export enum TipoPagoEnum {
   Tarjeta = 'Tarjeta',
   Transferencia = 'Transferencia',
 }
+
+export class DetalleVentaInput {
+  @IsNotEmpty({ message: 'El ID del inventario es requerido' })
+  @IsInt({ message: 'El ID del inventario debe ser un número entero' })
+  @IsPositive({ message: 'El ID del inventario debe ser positivo' })
+  @Type(() => Number)
+  inventario_id: number;
+
+  @IsNotEmpty({ message: 'La cantidad es requerida' })
+  @IsInt({ message: 'La cantidad debe ser un número entero' })
+  @IsPositive({ message: 'La cantidad debe ser positiva' })
+  @Min(1, { message: 'La cantidad mínima es 1' })
+  @Type(() => Number)
+  cantidad: number;
+
+  @IsNotEmpty({ message: 'El total es requerido' })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'El total debe tener máximo 2 decimales' },
+  )
+  @IsPositive({ message: 'El total debe ser positivo' })
+  @Transform(({ value }) => parseFloat(value))
+  total: number;
+}
+
 
 export class CreateVentaDto {
   @IsOptional()
@@ -96,4 +122,11 @@ export class CreateVentaDto {
   @Max(99999999.99, { message: 'El total no puede exceder 99,999,999.99' })
   @Transform(({ value }) => parseFloat(value))
   total: number;
+
+  @IsNotEmpty({ message: 'Los detalles de la venta son requeridos' })
+  @IsArray({ message: 'Los detalles deben ser un array' })
+  @ArrayMinSize(1, { message: 'Debe haber al menos un producto' })
+  @ValidateNested({ each: true })
+  @Type(() => DetalleVentaInput)
+  detalles: DetalleVentaInput[];
 }

@@ -8,7 +8,10 @@ export class VentasService {
   constructor(private prisma: PrismaService) { }
 
   async create(createVentaDto: CreateVentaDto) {
-    return this.prisma.ventas.create({
+  // Usar transacción para asegurar integridad
+  return this.prisma.$transaction(async (prisma) => {
+    // 1. Crear la venta
+    const venta = await prisma.ventas.create({
       data: {
         fecha: createVentaDto.fecha || new Date(),
         tipo_venta: createVentaDto.tipo_venta,
@@ -19,6 +22,49 @@ export class VentasService {
         descuento: createVentaDto.descuento || 0,
         total: createVentaDto.total,
       },
+    });
+
+    // 2. Crear detalles y descontar inventario
+    for (const detalle of createVentaDto.detalles) {
+      // Verificar stock disponible
+      const inventario = await prisma.inventarios.findUnique({
+        where: { id: detalle.inventario_id },
+      });
+
+      if (!inventario) {
+        throw new Error(`Inventario ${detalle.inventario_id} no encontrado`);
+      }
+
+      if (inventario.cantidad < detalle.cantidad) {
+        throw new Error(
+          `Stock insuficiente para inventario ${detalle.inventario_id}. Disponible: ${inventario.cantidad}, Solicitado: ${detalle.cantidad}`
+        );
+      }
+
+      // Crear detalle de venta
+      await prisma.detalleventas.create({
+        data: {
+          venta_id: venta.id,
+          inventario_id: detalle.inventario_id,
+          cantidad: detalle.cantidad,
+          total: detalle.total,
+        },
+      });
+
+      // Descontar del inventario
+      await prisma.inventarios.update({
+        where: { id: detalle.inventario_id },
+        data: {
+          cantidad: {
+            decrement: detalle.cantidad,
+          },
+        },
+      });
+    }
+
+    // 3. Retornar la venta completa con todos sus includes
+    return prisma.ventas.findUnique({
+      where: { id: venta.id },
       include: {
         clientes: true,
         empleados: true,
@@ -38,7 +84,8 @@ export class VentasService {
         },
       },
     });
-  }
+  });
+}
 
   async findAll() {
     return this.prisma.ventas.findMany({
