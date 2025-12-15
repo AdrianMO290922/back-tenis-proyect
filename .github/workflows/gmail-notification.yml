@@ -1,0 +1,101 @@
+name: CI/CD Producción y Notificaciones
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  # --- JOB 1: NOTIFICACIONES ---
+  notify-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determinar tipo de evento
+        id: event-type
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "type=Pull Request" >> $GITHUB_OUTPUT
+            echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+            echo "author=${{ github.event.pull_request.user.login }}" >> $GITHUB_OUTPUT
+            echo "url=${{ github.event.pull_request.html_url }}" >> $GITHUB_OUTPUT
+            echo "branch=${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}" >> $GITHUB_OUTPUT
+          else
+            COMMIT_TITLE=$(echo "${{ github.event.head_commit.message }}" | head -n1)
+            echo "type=Push" >> $GITHUB_OUTPUT
+            echo "title=${COMMIT_TITLE}" >> $GITHUB_OUTPUT
+            echo "author=${{ github.event.head_commit.author.name }}" >> $GITHUB_OUTPUT
+            echo "url=${{ github.event.compare }}" >> $GITHUB_OUTPUT
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Enviar notificación por email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[${{ steps.event-type.outputs.type }}] ${{ steps.event-type.outputs.title }}"
+          to: ${{ secrets.MAIL_TO }}
+          from: GitHub Actions <${{ secrets.MAIL_USERNAME }}>
+          html_body: |
+            <!DOCTYPE html>
+            <html>
+            <body>
+                <h3>🔔 Actividad en ${{ github.repository }}</h3>
+                <p><b>Evento:</b> ${{ steps.event-type.outputs.type }}</p>
+                <p><b>Autor:</b> ${{ steps.event-type.outputs.author }}</p>
+                <p><b>Rama:</b> ${{ steps.event-type.outputs.branch }}</p>
+                <p><a href="${{ steps.event-type.outputs.url }}">Ver cambios</a></p>
+            </body>
+            </html>
+
+ # --- JOB 2: DESPLIEGUE A PRODUCCIÓN ---
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: notify-email
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Login en Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build y Push de la Imagen Docker
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/nest-api:latest
+
+      - name: Desplegar en VPS vía SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME_VPS }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Bajar la nueva imagen
+            docker pull ${{ secrets.DOCKER_USERNAME }}/nest-api:latest
+            
+            # 2. Limpieza: Detener contenedor viejo si existe
+            # (No te preocupes si falla la primera vez, es normal)
+            docker stop nestjs-prod || true
+            docker rm nestjs-prod || true
+            
+            # 3. Correr el nuevo contenedor
+            # --env-file ./.env  
+            docker run -d \
+            --name nestjs-prod \
+            --restart unless-stopped \
+            --env-file ./.env \
+            -p 80:4321 \
+            ${{ secrets.DOCKER_USERNAME }}/nest-api:latest
