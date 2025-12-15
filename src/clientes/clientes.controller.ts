@@ -27,15 +27,7 @@ export class ClientesController {
     @Body() createClienteDto: CreateClienteDto,
     @Req() request: Request,
   ) {
-    try {
-      return await this.clienteService.create(createClienteDto);
-    } catch (error) {
-      return {
-        statusCode: 500,
-        message: error?.message || 'Error interno al crear cliente',
-        error,
-      };
-    }
+    return await this.clienteService.create(createClienteDto);
   }
 
   @Get()
