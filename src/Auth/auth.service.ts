@@ -28,7 +28,7 @@ export class AuthService {
       });
     }
 
-    return identity; // Retornamos la identidad para que el controlador decida qué hacer
+    return identity;
   }
   async completeRegistration(dto: any, oauthId: number) {
     try {
