@@ -1,15 +1,36 @@
-import { Body, Controller, Post, Request, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Get, Request, UnauthorizedException, UseGuards,Req, Res } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { EmpleadosService } from "src/empleados/empleados.service";
 import type { JwtPayload } from "./types/jwt.payload.type";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "./guard/auth.guard";
+import { AuthGuard as PassaportAuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
 constructor(private readonly empleadoService: EmpleadosService,
             private readonly jwtService: JwtService){}
+@Get('github')
+  @UseGuards(PassaportAuthGuard('github'))
+  async githubLogin() {
+    // Inicia el flujo hacia GitHub
+  }
+
+  @Get('github/callback')
+  @UseGuards(PassaportAuthGuard('github'))
+  async githubCallback(@Req() req, @Res() res) {
+    const identity = req.user;
+
+    // Lógica de Salida:
+    // Si la identidad NO tiene empleado_id, mandamos al front a registrarse
+    if (!identity.empleado_id) {
+      return res.redirect(`${process.env.FRONTEND_URL}/register-complete?oauthId=${identity.id}`);
+    }
+
+    // Si YA tiene empleado_id, generamos el JWT de sesión (esto lo veremos después)
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  }
 
 @Post('register')
     async register(@Body() { email, password, nombre, apellido_p, apellido_m, rol }: RegisterDto){
