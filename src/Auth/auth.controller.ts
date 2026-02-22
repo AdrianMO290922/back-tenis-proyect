@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Request, UnauthorizedException, UseGuards,Req, Res } from "@nestjs/common";
+import { Body, Controller, Post, Get, Request, UnauthorizedException, UseGuards,Req, Res,Query } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { EmpleadosService } from "src/empleados/empleados.service";
@@ -6,11 +6,15 @@ import type { JwtPayload } from "./types/jwt.payload.type";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "./guard/auth.guard";
 import { AuthGuard as PassaportAuthGuard } from '@nestjs/passport';
+import { CreateEmpleadoDto } from "src/empleados/dto/create-empleado.dto";
+import { AuthService } from "./auth.service";
+import { ErrorManager } from "src/utils/error.manager";
 
 @Controller('auth')
 export class AuthController {
 constructor(private readonly empleadoService: EmpleadosService,
-            private readonly jwtService: JwtService){}
+            private readonly jwtService: JwtService,
+            private readonly authService: AuthService){}
 @Get('github')
   @UseGuards(PassaportAuthGuard('github'))
   async githubLogin() {
@@ -31,6 +35,22 @@ constructor(private readonly empleadoService: EmpleadosService,
     // Si YA tiene empleado_id, generamos el JWT de sesión (esto lo veremos después)
     return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
+  @Post('register-complete')
+async registerComplete(
+  @Body() body: CreateEmpleadoDto,
+  @Query('oauthId') oauthId: string
+) {
+  const id = parseInt(oauthId, 10);
+  
+  if (isNaN(id)) {
+    throw new ErrorManager({
+      type: 'BAD_REQUEST',
+      message: 'ID de OAuth inválido',
+    });
+  }
+
+  return await this.authService.completeRegistration(body, id);
+}
 
 @Post('register')
     async register(@Body() { email, password, nombre, apellido_p, apellido_m, rol }: RegisterDto){
