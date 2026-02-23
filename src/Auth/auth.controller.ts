@@ -15,6 +15,24 @@ export class AuthController {
 constructor(private readonly empleadoService: EmpleadosService,
             private readonly jwtService: JwtService,
             private readonly authService: AuthService){}
+@Get('google')
+    @UseGuards(PassaportAuthGuard('google'))
+    async googleLogin() {
+    // Redirige a Google
+    }
+
+    @Get('google/callback')
+    @UseGuards(PassaportAuthGuard('google'))
+    async googleCallback(@Req() req, @Res() res) {
+    const identity = req.user;
+
+    // Lógica de Salida: Reutilizamos la misma redirección que GitHub
+    if (!identity.empleado_id) {
+        return res.redirect(`${process.env.FRONTEND_URL}/register-complete?oauthId=${identity.id}`);
+    }
+
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+    }
 @Get('github')
   @UseGuards(PassaportAuthGuard('github'))
   async githubLogin() {
@@ -36,21 +54,21 @@ constructor(private readonly empleadoService: EmpleadosService,
     return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
   }
   @Post('register-complete')
-async registerComplete(
-  @Body() body: CreateEmpleadoDto,
-  @Query('oauthId') oauthId: string
-) {
-  const id = parseInt(oauthId, 10);
-  
-  if (isNaN(id)) {
-    throw new ErrorManager({
-      type: 'BAD_REQUEST',
-      message: 'ID de OAuth inválido',
-    });
-  }
+    async registerComplete(
+    @Body() body: CreateEmpleadoDto,
+    @Query('oauthId') oauthId: string
+    ) {
+    const id = parseInt(oauthId, 10);
+    
+    if (isNaN(id)) {
+        throw new ErrorManager({
+        type: 'BAD_REQUEST',
+        message: 'ID de OAuth inválido',
+        });
+    }
 
-  return await this.authService.completeRegistration(body, id);
-}
+    return await this.authService.completeRegistration(body, id);
+    }
 
 @Post('register')
     async register(@Body() { email, password, nombre, apellido_p, apellido_m, rol }: RegisterDto){
