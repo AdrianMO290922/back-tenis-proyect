@@ -15,16 +15,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
-    const { id, emails } = profile;
-    
-    // Sanitización: Extraemos solo lo que nuestra tabla necesita
+    const { id, emails, name } = profile;
+
     const oauthUser = {
       provider: 'google',
       providerId: id,
       email: emails[0].value,
+      nombre: name?.givenName || null,
+      apellido_p: name?.familyName || null,
     };
 
-    // Procesamiento: Usamos la misma lógica que con GitHub
     const user = await this.authService.validateOrCreateOAuthUser(oauthUser);
     done(null, user);
   }

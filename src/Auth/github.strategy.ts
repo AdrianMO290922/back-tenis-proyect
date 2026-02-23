@@ -15,13 +15,23 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any) {
-    const { id, emails, username } = profile;
-    
-    // Objeto sanitizado para pasar al procesamiento
+    const { id, emails, displayName } = profile;
+
+    let nombre: string | null = null;
+    let apellido_p: string | null = null;
+
+    if (displayName) {
+      const parts = displayName.trim().split(/\s+/);
+      nombre = parts[0] || null;
+      apellido_p = parts.length > 1 ? parts.slice(1).join(' ') : null;
+    }
+
     const oauthUser = {
       provider: 'github',
       providerId: id,
       email: emails[0].value,
+      nombre,
+      apellido_p,
     };
 
     return await this.authService.validateOrCreateOAuthUser(oauthUser);

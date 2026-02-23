@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Request, UnauthorizedException, UseGuards,Req, Res,Query } from "@nestjs/common";
+import { Body, Controller, Post, Get, Request, UnauthorizedException, UseGuards, Req, Res } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { EmpleadosService } from "src/empleados/empleados.service";
@@ -6,15 +6,12 @@ import type { JwtPayload } from "./types/jwt.payload.type";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "./guard/auth.guard";
 import { AuthGuard as PassaportAuthGuard } from '@nestjs/passport';
-import { CreateEmpleadoDto } from "src/empleados/dto/create-empleado.dto";
-import { AuthService } from "./auth.service";
-import { ErrorManager } from "src/utils/error.manager";
 
 @Controller('auth')
 export class AuthController {
 constructor(private readonly empleadoService: EmpleadosService,
-            private readonly jwtService: JwtService,
-            private readonly authService: AuthService){}
+            private readonly jwtService: JwtService){}
+
 @Get('google')
     @UseGuards(PassaportAuthGuard('google'))
     async googleLogin() {
@@ -24,15 +21,9 @@ constructor(private readonly empleadoService: EmpleadosService,
     @Get('google/callback')
     @UseGuards(PassaportAuthGuard('google'))
     async googleCallback(@Req() req, @Res() res) {
-    const identity = req.user;
-
-    // Lógica de Salida: Reutilizamos la misma redirección que GitHub
-    if (!identity.empleado_id) {
-        return res.redirect(`${process.env.FRONTEND_URL}/register-complete?oauthId=${identity.id}`);
+      return this.handleOAuthCallback(req.user, res);
     }
 
-    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
-    }
 @Get('github')
   @UseGuards(PassaportAuthGuard('github'))
   async githubLogin() {
@@ -42,33 +33,8 @@ constructor(private readonly empleadoService: EmpleadosService,
   @Get('github/callback')
   @UseGuards(PassaportAuthGuard('github'))
   async githubCallback(@Req() req, @Res() res) {
-    const identity = req.user;
-
-    // Lógica de Salida:
-    // Si la identidad NO tiene empleado_id, mandamos al front a registrarse
-    if (!identity.empleado_id) {
-      return res.redirect(`${process.env.FRONTEND_URL}/register-complete?oauthId=${identity.id}`);
-    }
-
-    // Si YA tiene empleado_id, generamos el JWT de sesión (esto lo veremos después)
-    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+    return this.handleOAuthCallback(req.user, res);
   }
-  @Post('register-complete')
-    async registerComplete(
-    @Body() body: CreateEmpleadoDto,
-    @Query('oauthId') oauthId: string
-    ) {
-    const id = parseInt(oauthId, 10);
-    
-    if (isNaN(id)) {
-        throw new ErrorManager({
-        type: 'BAD_REQUEST',
-        message: 'ID de OAuth inválido',
-        });
-    }
-
-    return await this.authService.completeRegistration(body, id);
-    }
 
 @Post('register')
     async register(@Body() { email, password, nombre, apellido_p, apellido_m, rol }: RegisterDto){
@@ -88,10 +54,20 @@ constructor(private readonly empleadoService: EmpleadosService,
         const access_token = await this.jwtService.signAsync(payload);
         return {message: 'Login exitoso', access_token}
 
-    } 
+    }
     @Post('profile')
     @UseGuards(AuthGuard)
     Profile(@Request() {jwt}:{jwt:JwtPayload}) {
         return jwt;
     }
+
+  private async handleOAuthCallback(identity: any, res: any) {
+    const payload: JwtPayload = {
+      empleadoId: identity.empleado_id,
+      email: identity.empleado.email || identity.email,
+      rol: identity.empleado.rol,
+    };
+    const access_token = await this.jwtService.signAsync(payload);
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${access_token}`);
+  }
 }
