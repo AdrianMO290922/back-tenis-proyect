@@ -10,13 +10,18 @@ import {
   Patch,
   UseGuards,
   Req,
+  UseInterceptors, ClassSerializerInterceptor
 } from '@nestjs/common';
 import { ClientesService } from '././clientes.service';
 import { Prisma } from '@prisma/client';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { plainToInstance } from 'class-transformer';
+import { ClientResponseDto } from './dto/response-cliente-dto';
 
+
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('clientes')
 export class ClientesController {
   constructor(private readonly clienteService: ClientesService) {}
@@ -27,18 +32,27 @@ export class ClientesController {
     @Body() createClienteDto: CreateClienteDto,
     @Req() request: Request,
   ) {
-    return await this.clienteService.create(createClienteDto);
+    const clientEntity = await this.clienteService.create(createClienteDto);
+    return plainToInstance(ClientResponseDto, clientEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Get()
   async findAll() {
-    return await this.clienteService.findAll();
+    const clientEntity = await this.clienteService.findAll();
+    return plainToInstance(ClientResponseDto, clientEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
     const clienteId = Number(id);
-    return await this.clienteService.findOne(clienteId);
+    const clientEntity = await this.clienteService.findOne(clienteId);
+    return plainToInstance(ClientResponseDto, clientEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Patch(':id')
@@ -52,7 +66,9 @@ export class ClientesController {
       clienteId,
       updateClienteDto,
     );
-    return updatedCliente;
+    return plainToInstance(ClientResponseDto, updatedCliente, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Delete(':id')

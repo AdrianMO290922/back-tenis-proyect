@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
+import { ErrorManager } from 'src/utils/error.manager';
 
 @Injectable()
 export class VentasService {
@@ -32,13 +33,17 @@ export class VentasService {
       });
 
       if (!inventario) {
-        throw new Error(`Inventario ${detalle.inventario_id} no encontrado`);
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El inventario con id ${detalle.inventario_id} no existe`,
+        });
       }
 
       if (inventario.cantidad < detalle.cantidad) {
-        throw new Error(
-          `Stock insuficiente para inventario ${detalle.inventario_id}. Disponible: ${inventario.cantidad}, Solicitado: ${detalle.cantidad}`
-        );
+        throw new ErrorManager({
+          type: 'NOT_ACCEPTABLE',
+          message: `Stock insuficiente para inventario ${detalle.inventario_id}. Disponible: ${inventario.cantidad}, Solicitado: ${detalle.cantidad}`,
+        });
       }
 
       // Crear detalle de venta
@@ -60,6 +65,7 @@ export class VentasService {
           },
         },
       });
+      
     }
 
     // 3. Retornar la venta completa con todos sus includes
