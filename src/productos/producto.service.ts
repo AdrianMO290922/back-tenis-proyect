@@ -56,7 +56,7 @@ export class ProductoService {
       if (!producto) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El producto con id ${id} no existe`,
+          message: `El producto no existe`,
         });
       } 
       return producto;
@@ -79,7 +79,7 @@ export class ProductoService {
       if (!updatedProducto) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El producto con id ${id} no existe`,
+          message: `El producto no existe`,
         });
       }
       return updatedProducto;
@@ -94,7 +94,7 @@ export class ProductoService {
       if (!deletedProducto) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El producto con id ${id} no existe`,
+          message: `El producto no existe`,
         });
       }
       return deletedProducto;
