@@ -1,6 +1,7 @@
 export class Categoria {
-  idcategoria: number;
+  id: number;
   nombre: string;
-  created_at?: Date;
-  updated_at?: Date;
+  descripcion?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
