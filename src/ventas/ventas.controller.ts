@@ -1,5 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Response, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Response, UseInterceptors, ClassSerializerInterceptor, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { RolesGuard } from 'src/Auth/guard/roles.guard';
+import { Roles } from 'src/Auth/decorators/roles.decorator';
+import { Rol } from 'src/empleados/dto/create-empleado.dto';
 import { VentasService } from './ventas.service';
 import { VentasReportService } from './reportes/ventas-report.service';
 import { CreateVentaDto } from './dto/create-venta.dto';
@@ -126,6 +130,8 @@ export class VentasController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async update(@Param('id') id: string, @Body() updateVentaDto: UpdateVentaDto) {
     const entity = await this.ventasService.update(+id, updateVentaDto);
     return plainToInstance(VentaResponseDto, entity, {
@@ -134,6 +140,8 @@ export class VentasController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async remove(@Param('id') id: string) {
     return await this.ventasService.remove(+id);
   }

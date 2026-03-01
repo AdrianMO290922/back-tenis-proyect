@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor, UseGuards } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { plainToInstance } from 'class-transformer';
 import { ClientResponseDto } from './dto/response-inventario-dto';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { RolesGuard } from 'src/Auth/guard/roles.guard';
+import { Roles } from 'src/Auth/decorators/roles.decorator';
+import { Rol } from 'src/empleados/dto/create-empleado.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('productos')
@@ -46,6 +50,8 @@ export class ProductoController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
     const productoEntity = await this.productoService.update(+id, updateProductoDto);
     return plainToInstance(ClientResponseDto, productoEntity, {
@@ -54,6 +60,8 @@ export class ProductoController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async remove(@Param('id') id: string) {
     return await this.productoService.remove(+id);
   }

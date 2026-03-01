@@ -17,6 +17,9 @@ import { Prisma } from '@prisma/client';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { RolesGuard } from 'src/Auth/guard/roles.guard';
+import { Roles } from 'src/Auth/decorators/roles.decorator';
+import { Rol } from 'src/empleados/dto/create-empleado.dto';
 import { plainToInstance } from 'class-transformer';
 import { ClientResponseDto } from './dto/response-cliente-dto';
 
@@ -56,7 +59,8 @@ export class ClientesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async update(
     @Param('id') id: number,
     @Body() updateClienteDto: UpdateClienteDto,
@@ -72,7 +76,8 @@ export class ClientesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async delete(@Param('id') id: number) {
     const clienteId = Number(id);
     return await this.clienteService.delete(clienteId);

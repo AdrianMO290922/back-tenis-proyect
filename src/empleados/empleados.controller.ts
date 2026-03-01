@@ -1,8 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,UseInterceptors,ClassSerializerInterceptor } from '@nestjs/common';
 import { EmpleadosService } from './empleados.service';
-import { CreateEmpleadoDto } from './dto/create-empleado.dto';
+import { CreateEmpleadoDto, Rol } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { RolesGuard } from 'src/Auth/guard/roles.guard';
+import { Roles } from 'src/Auth/decorators/roles.decorator';
 import { plainToInstance } from 'class-transformer';
 import { EmpleadoResponseDto } from './dto/response-empleado.dto';
 
@@ -38,7 +40,8 @@ export class EmpleadosController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto) {
     const updatedEmpleado = await this.empleadosService.update(+id, updateEmpleadoDto);
     return plainToInstance(EmpleadoResponseDto, updatedEmpleado, {
@@ -47,7 +50,8 @@ export class EmpleadosController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async remove(@Param('id') id: string) {
     return await this.empleadosService.remove(+id);
   }
