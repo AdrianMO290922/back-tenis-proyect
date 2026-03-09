@@ -36,7 +36,7 @@ export class InventarioService {
       if (!inventario) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El inventario con id ${id} no existe`,
+          message: `El inventario no existe`,
         });
       }
       return inventario;
@@ -55,7 +55,7 @@ export class InventarioService {
       if (!updatedInventario) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El inventario con id ${id} no existe`,
+          message: `El inventario no existe`,
         });
       }
       return updatedInventario;
@@ -70,7 +70,7 @@ export class InventarioService {
       if (!deletedInventario) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `El inventario con id ${id} no existe`,
+          message: `El inventario no existe`,
         });
       }
       return deletedInventario;

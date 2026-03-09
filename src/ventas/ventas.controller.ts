@@ -1,12 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Response } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Response, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { VentasService } from './ventas.service';
 import { VentasReportService } from './reportes/ventas-report.service';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
+import { VentaResponseDto } from './dto/response-venta.dto';
+import { plainToInstance } from 'class-transformer';
 import type { Response as ExpressResponse } from 'express';
 
 @ApiTags('Ventas')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('ventas')
 export class VentasController {
   constructor(
@@ -15,13 +18,19 @@ export class VentasController {
   ) { }
 
   @Post()
-  create(@Body() createVentaDto: CreateVentaDto) {
-    return this.ventasService.create(createVentaDto);
+  async create(@Body() createVentaDto: CreateVentaDto) {
+    const entity = await this.ventasService.create(createVentaDto);
+    return plainToInstance(VentaResponseDto, entity, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.ventasService.findAll();
+  async findAll() {
+    const entities = await this.ventasService.findAll();
+    return plainToInstance(VentaResponseDto, entities, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get('reporte/pdf')
@@ -93,27 +102,39 @@ export class VentasController {
   }
 
   @Get('cliente/:clienteId')
-  findByCliente(@Param('clienteId') clienteId: string) {
-    return this.ventasService.findByCliente(+clienteId);
+  async findByCliente(@Param('clienteId') clienteId: string) {
+    const entities = await this.ventasService.findByCliente(+clienteId);
+    return plainToInstance(VentaResponseDto, entities, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get('empleado/:empleadoId')
-  findByEmpleado(@Param('empleadoId') empleadoId: string) {
-    return this.ventasService.findByEmpleado(+empleadoId);
+  async findByEmpleado(@Param('empleadoId') empleadoId: string) {
+    const entities = await this.ventasService.findByEmpleado(+empleadoId);
+    return plainToInstance(VentaResponseDto, entities, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ventasService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const entity = await this.ventasService.findOne(+id);
+    return plainToInstance(VentaResponseDto, entity, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVentaDto: UpdateVentaDto) {
-    return this.ventasService.update(+id, updateVentaDto);
+  async update(@Param('id') id: string, @Body() updateVentaDto: UpdateVentaDto) {
+    const entity = await this.ventasService.update(+id, updateVentaDto);
+    return plainToInstance(VentaResponseDto, entity, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ventasService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.ventasService.remove(+id);
   }
 }

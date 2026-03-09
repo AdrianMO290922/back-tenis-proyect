@@ -1,41 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { plainToInstance } from 'class-transformer';
+import { ClientResponseDto } from './dto/response-inventario-dto';
 import { Prisma } from '@prisma/client';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('productos')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
 
   @Post()
   async create(@Body() createProductoDto: CreateProductoDto) {
-    return await this.productoService.create(createProductoDto);
+    const productoEntity = await this.productoService.create(createProductoDto);
+    return plainToInstance(ClientResponseDto, productoEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Get()
   async findAll() {
-    return await this.productoService.findAll();
+    const productos = await this.productoService.findAll();
+    return plainToInstance(ClientResponseDto, productos, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.productoService.findOne(+id);
+    const productoEntity = await this.productoService.findOne(+id);
+    return plainToInstance(ClientResponseDto, productoEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Get('categoria/:categoriaId')
-  findByCliente(@Param('categoriaId') categoriaId: string) {
+  findByCategoria(@Param('categoriaId') categoriaId: string) {
     return this.productoService.findByCategoria(+categoriaId);
   }
 
   @Get('marca/:marcaId')
-  findByEmpleado(@Param('marcaId') marcaId: string) {
+  findByMarca(@Param('marcaId') marcaId: string) {
     return this.productoService.findByMarca(+marcaId);
   }
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return await this.productoService.update(+id, updateProductoDto);
+    const productoEntity = await this.productoService.update(+id, updateProductoDto);
+    return plainToInstance(ClientResponseDto, productoEntity, {
+      excludeExtraneousValues: true, 
+    });
   }
 
   @Delete(':id')

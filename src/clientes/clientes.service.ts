@@ -51,6 +51,12 @@ export class ClientesService {
             : undefined,
         },
       });
+      if (!updatedCliente) {
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El cliente con id ${id} no existe`,
+        });
+      }
 
       return updatedCliente;
     } catch (error) {
@@ -63,6 +69,12 @@ export class ClientesService {
       const deletedCliente = await this.prisma.clientes.delete({
         where: { id },
       });
+      if(!deletedCliente){
+        throw new ErrorManager({
+          type: 'NOT_FOUND',
+          message: `El cliente con id ${id} no existe`,
+        });
+      }
 
       return deletedCliente;
     } catch (error) {

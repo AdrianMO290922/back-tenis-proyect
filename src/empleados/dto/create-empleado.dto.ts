@@ -1,6 +1,5 @@
 import {
   IsEnum,
-  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -15,12 +14,12 @@ export enum Rol {
 
 export class CreateEmpleadoDto {
   @IsString()
-  @IsNotEmpty()
-  nombre: string;
+  @IsOptional()
+  nombre?: string;
 
   @IsString()
-  @IsNotEmpty()
-  apellido_p: string;
+  @IsOptional()
+  apellido_p?: string;
 
   @IsOptional()
   @IsString()
@@ -35,9 +34,9 @@ export class CreateEmpleadoDto {
   @IsEmail()
   email?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  password: string;
+  password?: string;
 
   @IsOptional()
   @IsEnum(Rol, { message: 'El rol debe ser Admin o Employee' })

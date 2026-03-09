@@ -15,8 +15,7 @@ export class MarcasService {
       });
       return marca;
     } catch (error) {
-      // Manejo del error con tu ErrorManager existente
-      throw ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError('Error al crear la marca');
     }
   }
 
@@ -25,7 +24,7 @@ export class MarcasService {
       const marcas = await this.prisma.marcas.findMany();
       return marcas;
     } catch (error) {
-      throw ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError('Error al obtener las marcas');
     }
   }
 
@@ -33,15 +32,14 @@ export class MarcasService {
     try {
       const marca = await this.prisma.marcas.findUnique({ where: { id } });
       if (!marca) {
-        // Aquí lanzamos un error personalizado
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `La marca con id ${id} no existe`,
+          message: 'Marca no encontrada',
         });
       }
       return marca;
     } catch (error) {
-      throw ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError('Error al obtener la marca');
     }
   }
 
@@ -54,12 +52,12 @@ export class MarcasService {
       if (!marca) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `No se pudo actualizar: la marca con id ${id} no existe`,
+          message: 'No se pudo actualizar: marca no encontrada',
         });
       }
       return marca;
     } catch (error) {
-      throw ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError('Error al actualizar la marca');
     }
   }
 
@@ -69,12 +67,12 @@ export class MarcasService {
       if (!marca) {
         throw new ErrorManager({
           type: 'NOT_FOUND',
-          message: `No se pudo eliminar: la marca con id ${id} no existe`,
+          message: 'No se pudo eliminar: marca no encontrada',
         });
       }
       return marca;
     } catch (error) {
-      throw ErrorManager.createSignatureError(error.message);
+      throw ErrorManager.createSignatureError('Error al eliminar la marca');
     }
   }
 }
