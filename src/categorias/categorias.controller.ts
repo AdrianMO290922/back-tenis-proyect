@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { CategoriasService } from './categorias.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { plainToInstance } from 'class-transformer';
 import { CategoriaResponseDto } from './dto/response-categoria.dto';
+import { AuthGuard } from 'src/Auth/guard/auth.guard';
+import { RolesGuard } from 'src/Auth/guard/roles.guard';
+import { Roles } from 'src/Auth/decorators/roles.decorator';
+import { Rol } from 'src/empleados/dto/create-empleado.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('categorias')
@@ -35,6 +39,8 @@ export class CategoriasController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async update(@Param('id') id: number, @Body() updateCategoriaDto: UpdateCategoriaDto) {
     const categoriaEntity = await this.categoriasService.update(+id, updateCategoriaDto);
     return plainToInstance(CategoriaResponseDto, categoriaEntity, {
@@ -43,6 +49,8 @@ export class CategoriasController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Rol.ADMIN)
   async remove(@Param('id') id: number) {
     return await this.categoriasService.remove(+id);
   }
