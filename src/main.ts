@@ -21,5 +21,6 @@ const document = SwaggerModule.createDocument(app, config);
 app.use('/docs', apiReference({content:document}))
 
   await app.listen(process.env.PORT ?? 4321);
+
 }
 bootstrap();

@@ -4,6 +4,8 @@ import {
   IsBoolean,
   IsEmail,
   IsDateString,
+  Min,
+  MinLength,
 } from 'class-validator';
 
 export class CreateClienteDto {
@@ -30,6 +32,7 @@ export class CreateClienteDto {
   fecha_nacimiento?: string;
 
   @IsString()
+  @MinLength(6,{ message: 'La contraseña debe tener al menos 6 caracteres' })
   password: string;
 
   @IsOptional()

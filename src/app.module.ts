@@ -13,13 +13,14 @@ import { CategoriasModule } from './categorias/categorias.module';
 import { MarcasModule } from './marcas/marcas.module';
 import { AuthModule } from './Auth/auth.module';
 import { ImagenesProductosModule } from './imagenes-productos/imagenes-productos.module';
-
-
+import { TokenBucketService } from './common/services/token-bucket.service';
+import { RateLimitGuard } from './common/guards/rate-limit.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
-    PrismaModule, 
-    ClientesModule, 
+    PrismaModule,
+    ClientesModule,
     EmpleadosModule,
     DomiciliosModule,
     ProductoModule,
@@ -32,6 +33,12 @@ import { ImagenesProductosModule } from './imagenes-productos/imagenes-productos
     ImagenesProductosModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    TokenBucketService,
+    {
+      provide: APP_GUARD,
+      useClass: RateLimitGuard,
+    },
+  ],
 })
 export class AppModule {}

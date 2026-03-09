@@ -6,11 +6,13 @@ import type { JwtPayload } from "./types/jwt.payload.type";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "./guard/auth.guard";
 import { AuthGuard as PassaportAuthGuard } from '@nestjs/passport';
+import { AuthService } from "./auth.service";
 
 @Controller('auth')
 export class AuthController {
 constructor(private readonly empleadoService: EmpleadosService,
-            private readonly jwtService: JwtService){}
+            private readonly jwtService: JwtService,
+            private readonly authService: AuthService){}
 
 @Get('google')
     @UseGuards(PassaportAuthGuard('google'))
@@ -44,10 +46,11 @@ constructor(private readonly empleadoService: EmpleadosService,
 @Post('login')
     async login(@Body() { email, password }: LoginDto){
         const empleado = await this.empleadoService.findByEmail(email);
-        if(empleado == null){
+        if(empleado == null || !empleado.password){
             throw new UnauthorizedException('Credenciales invalidas');
         }
-        if(empleado.password !== password){
+        const isValid = await this.authService.verifyPassword(empleado.password, password);
+        if(!isValid){
             throw new UnauthorizedException('Credenciales invalidas');
         }
         const payload: JwtPayload = {empleadoId: empleado.id, email: empleado.email || '', rol: empleado.rol};

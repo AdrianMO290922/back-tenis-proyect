@@ -34,9 +34,8 @@ export class CreateEmpleadoDto {
   @IsEmail()
   email?: string;
 
-  @IsOptional()
   @IsString()
-  password?: string;
+  password: string;
 
   @IsOptional()
   @IsEnum(Rol, { message: 'El rol debe ser Admin o Employee' })
