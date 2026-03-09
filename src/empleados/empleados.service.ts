@@ -3,12 +3,16 @@ import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ErrorManager } from 'src/utils/error.manager';
+import { AuthService } from 'src/Auth/auth.service';
 
 @Injectable()
 export class EmpleadosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private authService: AuthService) {}
   
   async create(createEmpleadoDto: CreateEmpleadoDto) {
+    // Cifrar la contraseña antes de guardar
+    const hashedPassword = await this.authService.hashPassword(createEmpleadoDto.password);
+    createEmpleadoDto.password = hashedPassword;
     return await this.prisma.empleados.create({ data: createEmpleadoDto });
   }
 
