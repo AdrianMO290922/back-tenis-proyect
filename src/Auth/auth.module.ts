@@ -20,6 +20,6 @@ import { GoogleStrategy } from "./google.strategy";
     ],
     controllers: [AuthController],
     providers: [EmpleadosService,AuthService,GithubStrategy,GoogleStrategy ],
-    exports: [] 
+    exports: [AuthService]
 })
 export class AuthModule {}
